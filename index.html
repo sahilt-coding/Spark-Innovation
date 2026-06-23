@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spark Innovation — STEM Camps for Kids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a1a2e;
+  --navy-deep: #0a0a18;
+  --navy-mid: #0f0f24;
+  --blue: #64B5F6;
+  --blue-light: #90CAF9;
+  --gold: #FFE066;
+  --gold-dark: #ddb800;
+  --white: #ffffff;
+  --orange: #FF6B35;
+  --purple: #7C3AED;
+  --teal: #0D9488;
+  --green: #059669;
+  --red: #DC2626;
+  --accent-blue: #2563EB;
+  --text-muted: rgba(255,255,255,0.62);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── NAVBAR ────────────────────────────────────── */
+#navbar {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  padding: 1.1rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .35s, box-shadow .35s, border-color .35s;
+}
+#navbar.scrolled {
+  background: rgba(26,26,46,.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255,224,102,.15);
+  box-shadow: 0 4px 30px rgba(0,0,0,.35);
+}
+.nav-logo {
+  display:flex; align-items:center; gap:.5rem;
+  text-decoration:none;
+}
+.logo-star { width:32px; height:32px; filter: drop-shadow(0 0 8px rgba(255,224,102,.65)); flex-shrink:0; }
+.logo-text { font-size:1.35rem; font-weight:800; color:var(--gold); letter-spacing:-.4px; text-shadow:0 0 20px rgba(255,224,102,.3); }
+.nav-links { display:flex; list-style:none; gap:2rem; }
+.nav-links a {
+  color:rgba(255,255,255,.82); text-decoration:none;
+  font-weight:500; font-size:.92rem;
+  position:relative; transition:color .2s;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-3px; left:0;
+  width:0; height:2px; background:var(--gold);
+  transition:width .3s;
+}
+.nav-links a:hover { color:var(--gold); }
+.nav-links a:hover::after { width:100%; }
+
+/* hamburger */
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; z-index:1002; }
+.hamburger span { display:block; width:24px; height:2px; background:var(--white); border-radius:2px; transition:all .3s; }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.hamburger.active span:nth-child(2) { opacity:0; width:0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+/* mobile overlay */
+.mobile-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(10,10,24,.97);
+  z-index:1001; flex-direction:column; align-items:center; justify-content:center; gap:2.5rem;
+}
+.mobile-overlay.open { display:flex; }
+.mobile-overlay a { color:var(--white); text-decoration:none; font-size:1.75rem; font-weight:700; transition:color .2s; }
+.mobile-overlay a:hover { color:var(--gold); }
+
+/* ── HERO ──────────────────────────────────────── */
+#home {
+  position:relative; min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #0d1b3e 0%, var(--navy) 55%, #08081a 100%);
+}
+.hero-bg {
+  position:absolute; inset:0; overflow:hidden; pointer-events:none;
+}
+/* circuit grid */
+.hero-bg::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(100,181,246,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100,181,246,.07) 1px, transparent 1px);
+  background-size:55px 55px;
+  mask-image: radial-gradient(ellipse at center, rgba(0,0,0,.55) 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,.55) 0%, transparent 72%);
+}
+.hero-glow {
+  position:absolute; width:700px; height:700px; border-radius:50%;
+  background: radial-gradient(circle, rgba(100,181,246,.13) 0%, transparent 68%);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation: hGlow 5s ease-in-out infinite;
+}
+@keyframes hGlow { 0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)} 50%{opacity:.9;transform:translate(-50%,-50%) scale(1.08)} }
+
+/* gears */
+.gear { position:absolute; animation: spinGear linear infinite; }
+.gear-1 { width:230px; height:230px; top:5%;  right:5%;  animation-duration:22s;  opacity:.09; }
+.gear-2 { width:150px; height:150px; top:55%; right:12%; animation-duration:16s;  opacity:.07; animation-direction:reverse; }
+.gear-3 { width:190px; height:190px; bottom:6%; left:4%; animation-duration:28s;  opacity:.08; }
+.gear-4 { width:95px;  height:95px;  top:18%; left:10%; animation-duration:13s;  opacity:.11; animation-direction:reverse; }
+@keyframes spinGear { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+/* floating dots */
+.dot { position:absolute; border-radius:50%; animation: floatDot ease-in-out infinite; }
+@keyframes floatDot { 0%,100%{transform:translateY(0) scale(1);opacity:.7} 50%{transform:translateY(-22px) scale(1.2);opacity:1} }
+
+.hero-content {
+  position:relative; z-index:2;
+  text-align:center; padding:2rem; max-width:820px;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:rgba(255,224,102,.1); border:1px solid rgba(255,224,102,.3);
+  color:var(--gold); padding:.38rem 1rem; border-radius:50px;
+  font-size:.82rem; font-weight:600; letter-spacing:.6px;
+  margin-bottom:1.6rem;
+  animation: fadeUp .8s ease forwards;
+}
+.hero-title {
+  font-size: clamp(2.6rem,6.5vw,4.8rem);
+  font-weight:900; line-height:1.08; margin-bottom:1.2rem;
+  animation: fadeUp .8s .15s ease both;
+}
+.hero-title .accent {
+  background: linear-gradient(130deg, var(--gold) 0%, #ffdd44 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub {
+  font-size:clamp(.95rem,2.4vw,1.22rem);
+  color:var(--text-muted); font-weight:300; line-height:1.7;
+  max-width:540px; margin:0 auto 2.6rem;
+  animation: fadeUp .8s .3s ease both;
+}
+.hero-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; animation: fadeUp .8s .45s ease both; }
+.btn-gold {
+  background:linear-gradient(130deg,var(--gold),#ffdd44);
+  color:var(--navy); padding:.9rem 2rem; border-radius:50px;
+  font-weight:700; font-size:.97rem; text-decoration:none;
+  display:inline-flex; align-items:center; gap:.45rem;
+  transition:all .3s; box-shadow:0 4px 22px rgba(255,224,102,.28);
+  border:none; cursor:pointer;
+}
+.btn-gold:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(255,224,102,.45); }
+.btn-outline {
+  background:transparent; color:var(--white);
+  padding:.9rem 2rem; border-radius:50px;
+  font-weight:600; font-size:.97rem; text-decoration:none;
+  display:inline-flex; align-items:center; gap:.45rem;
+  transition:all .3s; border:2px solid rgba(255,255,255,.45);
+}
+.btn-outline:hover { border-color:var(--white); background:rgba(255,255,255,.08); transform:translateY(-3px); }
+.scroll-cue {
+  position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+  z-index:2; animation: bounce 2.2s ease-in-out infinite;
+  color:rgba(255,255,255,.35);
+}
+.scroll-cue svg { width:28px; height:28px; }
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(10px)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── CAMP BANNER ───────────────────────────────── */
+.camp-banner {
+  position:relative; overflow:hidden;
+  background:linear-gradient(90deg,#0a2a5e,var(--blue),#0a2a5e);
+  padding:1rem 2rem; text-align:center;
+}
+.camp-banner::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,224,102,.07) 50%,transparent 100%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.banner-inner { position:relative; z-index:1; }
+.banner-dot {
+  display:inline-block; width:9px; height:9px; background:var(--gold);
+  border-radius:50%; margin-right:8px; vertical-align:middle;
+  animation: pulseDot 1.6s ease-in-out infinite;
+  box-shadow:0 0 0 0 rgba(255,224,102,.6);
+}
+@keyframes pulseDot { 0%{box-shadow:0 0 0 0 rgba(255,224,102,.7)} 70%{box-shadow:0 0 0 10px rgba(255,224,102,0)} 100%{box-shadow:0 0 0 0 rgba(255,224,102,0)} }
+.banner-text { font-size:clamp(.88rem,2.5vw,1.02rem); font-weight:600; color:var(--white); }
+.banner-text strong { color:var(--gold); }
+
+/* ── SHARED SECTION STYLES ────────────────────── */
+section { padding:5.5rem 2rem; }
+.container { max-width:1100px; margin:0 auto; }
+.sec-label {
+  display:inline-flex; align-items:center; gap:.6rem;
+  font-size:.75rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:2.5px; color:var(--gold); margin-bottom:.7rem;
+}
+.sec-label::before, .sec-label::after { content:''; display:block; width:28px; height:1px; background:rgba(255,224,102,.45); }
+.sec-title { font-size:clamp(1.9rem,4vw,2.9rem); font-weight:800; line-height:1.18; margin-bottom:.9rem; }
+.sec-sub { font-size:1rem; color:var(--text-muted); font-weight:300; line-height:1.75; max-width:600px; }
+.text-center { text-align:center; }
+.text-center .sec-sub { margin:0 auto; }
+
+/* scroll-reveal */
+.reveal { opacity:0; transform:translateY(38px); transition:opacity .7s ease, transform .7s ease; }
+.reveal.show { opacity:1; transform:translateY(0); }
+.d1{transition-delay:.08s} .d2{transition-delay:.16s} .d3{transition-delay:.24s}
+.d4{transition-delay:.32s} .d5{transition-delay:.4s}  .d6{transition-delay:.48s}
+
+/* ── PROGRAMS ──────────────────────────────────── */
+#programs { background:linear-gradient(180deg,var(--navy) 0%,var(--navy-mid) 100%); }
+.prog-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:3rem; }
+.prog-card {
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px; padding:2.5rem;
+  position:relative; overflow:hidden;
+  transition:transform .4s, box-shadow .4s, border-color .4s;
+}
+.prog-card::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:4px; border-radius:22px 22px 0 0;
+}
+.prog-card.pc-orange::before { background:linear-gradient(90deg,var(--orange),#ff9a5c); }
+.prog-card.pc-blue::before   { background:linear-gradient(90deg,var(--blue),#60a5fa); }
+.prog-card:hover { transform:translateY(-8px); border-color:rgba(255,255,255,.14); box-shadow:0 22px 60px rgba(0,0,0,.45); }
+.prog-icon { font-size:3rem; display:block; margin-bottom:1rem; }
+.prog-badge {
+  display:inline-block; padding:.28rem .8rem; border-radius:50px;
+  font-size:.76rem; font-weight:700; margin-bottom:1rem;
+}
+.pc-orange .prog-badge { background:rgba(255,107,53,.18); color:#ffaa7f; border:1px solid rgba(255,107,53,.3); }
+.pc-blue   .prog-badge { background:rgba(100,181,246,.22);  color:#90caf9; border:1px solid rgba(100,181,246,.35); }
+.prog-card h3 { font-size:1.45rem; font-weight:700; margin-bottom:.9rem; line-height:1.25; }
+.prog-card p  { color:var(--text-muted); line-height:1.75; font-size:.94rem; }
+
+/* ── CHALLENGE SHOWCASE ────────────────────────── */
+#challenges { background:var(--navy-mid); }
+.chal-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem; }
+.chal-card {
+  border-radius:18px; padding:2rem;
+  position:relative; overflow:hidden;
+  transition:transform .35s, box-shadow .35s;
+}
+.chal-card:hover { transform:translateY(-7px) scale(1.025); box-shadow:0 22px 55px rgba(0,0,0,.55); }
+.chal-card::before {
+  content:''; position:absolute; top:0; right:0;
+  width:110px; height:110px;
+  border-radius:0 18px 0 100%;
+  background:rgba(255,255,255,.06);
+}
+.cc1 { background:linear-gradient(140deg,#1a3464,#2563EB); }
+.cc2 { background:linear-gradient(140deg,#7c2a0e,#f97316); }
+.cc3 { background:linear-gradient(140deg,#3b0764,#7C3AED); }
+.cc4 { background:linear-gradient(140deg,#064e3b,#059669); }
+.cc5 { background:linear-gradient(140deg,#7f1d1d,#DC2626); }
+.cc6 { background:linear-gradient(140deg,#0c4a6e,#0D9488); }
+.chal-icon  { font-size:2.4rem; display:block; margin-bottom:.9rem; }
+.chal-card h3 { font-size:1.15rem; font-weight:700; margin-bottom:.35rem; }
+.chal-concept { font-size:.8rem; color:rgba(255,255,255,.7); margin-bottom:1rem; line-height:1.5; }
+.tags { display:flex; flex-wrap:wrap; gap:.4rem; }
+.tag {
+  background:rgba(255,255,255,.16); color:rgba(255,255,255,.9);
+  padding:.18rem .58rem; border-radius:50px; font-size:.7rem; font-weight:600;
+}
+
+/* ── WHY SECTION ───────────────────────────────── */
+#why { background:linear-gradient(180deg,var(--navy-mid) 0%,var(--navy) 100%); }
+.feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:3rem; }
+.feat-card {
+  text-align:center; padding:2.5rem 2rem;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:20px; transition:all .3s;
+}
+.feat-card:hover {
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,224,102,.22);
+  transform:translateY(-5px);
+  box-shadow:0 16px 45px rgba(0,0,0,.3);
+}
+.feat-icon { font-size:2.7rem; display:block; margin-bottom:1.1rem; }
+.feat-card h3 { font-size:1.18rem; font-weight:700; margin-bottom:.75rem; }
+.feat-card p  { color:var(--text-muted); line-height:1.75; font-size:.93rem; }
+
+/* ── REGISTRATION / CTA ────────────────────────── */
+#contact {
+  background:linear-gradient(140deg,#0d1f4a 0%,var(--navy) 100%);
+  position:relative; overflow:hidden;
+}
+#contact::before {
+  content:''; position:absolute; top:-40%; right:-15%;
+  width:700px; height:700px; border-radius:50%;
+  background:radial-gradient(circle,rgba(255,224,102,.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.contact-wrap { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; position:relative; z-index:1; }
+.contact-info .sec-title { font-size:clamp(2rem,4.5vw,3.1rem); }
+.contact-info .sec-sub { margin-top:.6rem; }
+.info-row {
+  display:flex; align-items:flex-start; gap:.9rem;
+  margin-top:1.2rem; padding:1rem 1.4rem;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px; transition:border-color .3s;
+}
+.info-row:hover { border-color:rgba(255,224,102,.2); }
+.info-icon { font-size:1.25rem; flex-shrink:0; margin-top:2px; }
+.info-body strong { display:block; font-size:.88rem; font-weight:600; color:var(--white); margin-bottom:.18rem; }
+.info-body span   { font-size:.86rem; color:var(--text-muted); line-height:1.5; }
+.email-cta {
+  display:inline-flex; align-items:center; gap:.55rem;
+  background:var(--gold); color:var(--navy);
+  padding:.88rem 1.75rem; border-radius:12px;
+  text-decoration:none; font-weight:700; font-size:.94rem;
+  margin-top:1.8rem; transition:all .3s;
+}
+.email-cta:hover { background:#ffd000; transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,224,102,.32); }
+
+/* form card */
+.form-card {
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:24px; padding:2.5rem;
+}
+.form-card h3 { font-size:1.28rem; font-weight:700; color:var(--gold); margin-bottom:1.6rem; }
+.form-group { margin-bottom:1.15rem; }
+.form-group label { display:block; font-size:.83rem; font-weight:600; color:rgba(255,255,255,.72); margin-bottom:.45rem; }
+.form-group input,
+.form-group textarea {
+  width:100%; padding:.82rem 1.05rem;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px; color:var(--white);
+  font-family:'Inter',sans-serif; font-size:.88rem;
+  transition:border-color .3s, box-shadow .3s; outline:none;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color:rgba(255,255,255,.28); }
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color:rgba(255,224,102,.4);
+  box-shadow:0 0 0 3px rgba(255,224,102,.1);
+  background:rgba(255,255,255,.1);
+}
+.form-group textarea { resize:vertical; min-height:92px; }
+.form-btn {
+  width:100%; padding:1rem; margin-top:.4rem;
+  background:linear-gradient(130deg,var(--gold),#ffdd44);
+  color:var(--navy); border:none; border-radius:10px;
+  font-weight:700; font-size:.97rem; font-family:'Inter',sans-serif;
+  cursor:pointer; transition:all .3s;
+}
+.form-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,224,102,.32); }
+.form-success {
+  display:none; text-align:center; padding:2rem;
+  color:var(--gold); font-size:1rem; font-weight:600;
+}
+.form-success span { display:block; font-size:2.5rem; margin-bottom:.8rem; }
+
+/* ── FOOTER ────────────────────────────────────── */
+footer {
+  background:var(--navy-deep);
+  padding:3.5rem 2rem 0;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.footer-grid {
+  max-width:1100px; margin:0 auto;
+  display:grid; grid-template-columns:1.5fr 1fr 1fr;
+  gap:3rem; align-items:start;
+}
+.footer-brand p {
+  margin-top:.85rem; color:rgba(255,255,255,.45);
+  font-size:.88rem; line-height:1.7; max-width:270px;
+}
+.footer-col h4 {
+  font-size:.78rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:1.8px; color:var(--gold); margin-bottom:1rem;
+}
+.footer-col ul { list-style:none; }
+.footer-col ul li { margin-bottom:.6rem; }
+.footer-col ul li a, .footer-col a {
+  color:rgba(255,255,255,.5); text-decoration:none;
+  font-size:.88rem; transition:color .2s;
+  display:inline-flex; align-items:center; gap:.4rem;
+}
+.footer-col ul li a:hover, .footer-col a:hover { color:var(--gold); }
+.footer-col .footer-addr { color:rgba(255,255,255,.38); font-size:.84rem; margin-top:.8rem; line-height:1.6; }
+.footer-bottom {
+  max-width:1100px; margin:2.5rem auto 0;
+  padding:1.5rem 0 2rem;
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+}
+.footer-bottom p { color:rgba(255,255,255,.3); font-size:.82rem; }
+
+/* ── RESPONSIVE ────────────────────────────────── */
+@media(max-width:900px){
+  .prog-grid    { grid-template-columns:1fr; }
+  .chal-grid    { grid-template-columns:repeat(2,1fr); }
+  .feat-grid    { grid-template-columns:repeat(2,1fr); }
+  .contact-wrap { grid-template-columns:1fr; gap:2.5rem; }
+  .footer-grid  { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:720px){
+  .nav-links  { display:none; }
+  .hamburger  { display:flex; }
+  section     { padding:4rem 1.5rem; }
+  .chal-grid  { grid-template-columns:1fr 1fr; gap:1rem; }
+  .feat-grid  { grid-template-columns:1fr; }
+  .footer-grid{ grid-template-columns:1fr; gap:2rem; }
+}
+@media(max-width:480px){
+  .chal-grid  { grid-template-columns:1fr; }
+  nav         { padding:1rem 1.25rem; }
+  .hero-btns  { flex-direction:column; align-items:center; }
+  .btn-gold, .btn-outline { width:100%; justify-content:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ──────────── NAVBAR ──────────── -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo">
+    <svg class="logo-star" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="18,2 21.9,12.7 33.2,13.1 24.2,20 27.4,31 18,24.6 8.6,31 11.8,20 2.8,13.1 14.1,12.7" fill="#FFE066"/>
+    </svg>
+    <span class="logo-text">Spark Innovation</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#why">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="ham">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileMenu">
+  <a href="#home"     class="mob-link">Home</a>
+  <a href="#programs" class="mob-link">Programs</a>
+  <a href="#why"      class="mob-link">About</a>
+  <a href="#contact"  class="mob-link">Contact</a>
+</div>
+
+<!-- ──────────── HERO ──────────── -->
+<section id="home">
+  <div class="hero-bg" id="heroBg">
+    <div class="hero-glow"></div>
+    <!-- Gears injected by JS -->
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">⚡ STEM Education for Grades K–8</div>
+    <h1 class="hero-title">
+      Where Kids <span class="accent">Build, Code,</span><br>and Innovate
+    </h1>
+    <p class="hero-sub">Hands-on STEM camps for elementary &amp; middle school students</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-gold">Register Now →</a>
+      <a href="#programs" class="btn-outline">Learn More ↓</a>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l5 5 5-5"/></svg>
+  </div>
+</section>
+
+
+<!-- ──────────── PROGRAMS ──────────── -->
+<section id="programs">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="sec-label">What We Offer</div>
+      <h2 class="sec-title">Our Programs</h2>
+      <p class="sec-sub">Two specialized tracks built for different age groups and learning goals.</p>
+    </div>
+
+    <div class="prog-grid" style="margin-top:3rem">
+      <div class="prog-card pc-orange reveal d2">
+        <span class="prog-icon">🏗️</span>
+        <span class="prog-badge">Ages 5–10</span>
+        <h3>Elementary Engineering Camp</h3>
+        <p>Hands-on build challenges — bridges, catapults, egg drops, and towers — with engineering concepts woven into every project. Kids learn to think like engineers: design, build, test, and improve.</p>
+      </div>
+      <div class="prog-card pc-blue reveal d3">
+        <span class="prog-icon">💻</span>
+        <span class="prog-badge">Ages 11–14</span>
+        <h3>Middle School Coding</h3>
+        <p>Introduction to coding — logic, problem-solving, and real programming fundamentals. Students work through challenges that build genuine computational thinking skills and a foundation for future development.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── CHALLENGE SHOWCASE ──────────── -->
+<section id="challenges">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="sec-label">Hands-On Learning</div>
+      <h2 class="sec-title">This Week's Build Challenges</h2>
+      <p class="sec-sub">Every session is built around a real engineering challenge. Students don't just learn — they create.</p>
+    </div>
+
+    <div class="chal-grid">
+      <div class="chal-card cc1 reveal d1">
+        <span class="chal-icon">🌉</span>
+        <h3>Bridge Building</h3>
+        <p class="chal-concept">Civil engineering, forces &amp; structures</p>
+        <div class="tags"><span class="tag">Civil Eng.</span><span class="tag">Forces</span><span class="tag">Structures</span></div>
+      </div>
+      <div class="chal-card cc2 reveal d2">
+        <span class="chal-icon">⚙️</span>
+        <h3>Catapult Launch</h3>
+        <p class="chal-concept">Mechanical engineering &amp; physics</p>
+        <div class="tags"><span class="tag">Mechanical</span><span class="tag">Physics</span><span class="tag">Energy</span></div>
+      </div>
+      <div class="chal-card cc3 reveal d3">
+        <span class="chal-icon">🏛️</span>
+        <h3>Earthquake-Proof Towers</h3>
+        <p class="chal-concept">Structural engineering &amp; resilience</p>
+        <div class="tags"><span class="tag">Structural</span><span class="tag">Resilience</span><span class="tag">Design</span></div>
+      </div>
+      <div class="chal-card cc4 reveal d4">
+        <span class="chal-icon">💧</span>
+        <h3>Water Filtration</h3>
+        <p class="chal-concept">Environmental engineering</p>
+        <div class="tags"><span class="tag">Environmental</span><span class="tag">Systems</span><span class="tag">Science</span></div>
+      </div>
+      <div class="chal-card cc5 reveal d5">
+        <span class="chal-icon">🥚</span>
+        <h3>Egg Drop Challenge</h3>
+        <p class="chal-concept">Aerospace engineering &amp; impact forces</p>
+        <div class="tags"><span class="tag">Aerospace</span><span class="tag">Impact</span><span class="tag">Prototyping</span></div>
+      </div>
+      <div class="chal-card cc6 reveal d6">
+        <span class="chal-icon">🎢</span>
+        <h3>Mini Roller Coaster</h3>
+        <p class="chal-concept">Physics &amp; kinetic energy</p>
+        <div class="tags"><span class="tag">Physics</span><span class="tag">Motion</span><span class="tag">Energy</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── WHY SPARK ──────────── -->
+<section id="why">
+  <div class="container">
+    <div class="text-center reveal">
+      <div class="sec-label">The Spark Difference</div>
+      <h2 class="sec-title">Why Spark Innovation?</h2>
+      <p class="sec-sub">We designed every part of our program to maximize engagement, learning, and fun.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card reveal d1">
+        <span class="feat-icon">🔬</span>
+        <h3>Hands-On Learning</h3>
+        <p>No lectures. Just building, testing, and discovering. Every session is activity-first, every day.</p>
+      </div>
+      <div class="feat-card reveal d2">
+        <span class="feat-icon">🤝</span>
+        <h3>Small Groups</h3>
+        <p>Every kid gets personal attention and guidance. We keep groups small so no one gets left behind.</p>
+      </div>
+      <div class="feat-card reveal d3">
+        <span class="feat-icon">💡</span>
+        <h3>Real Concepts</h3>
+        <p>Engineering and coding skills taught through real projects — not worksheets. Skills that actually stick.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── REGISTRATION / CTA ──────────── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-wrap">
+
+      <div class="contact-info reveal">
+        <div class="sec-label">Get In Touch</div>
+        <h2 class="sec-title">Ready to Spark Something?</h2>
+        <p class="sec-sub">We'd love to hear from you. Reach out to learn more about our programs and how to enroll your child.</p>
+
+        <a href="mailto:spark.innovation3@gmail.com" class="email-cta">✉️ Email Us</a>
+      </div>
+
+      <div class="form-card reveal d3">
+        <h3>✏️ Send Us a Message</h3>
+        <form id="regForm">
+          <div class="form-group">
+            <label for="fname">Your Name</label>
+            <input type="text" id="fname" name="name" placeholder="Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="fchild">Child's Age / Grade</label>
+            <input type="text" id="fchild" name="child" placeholder="e.g. 8 years old / 3rd grade" required>
+          </div>
+          <div class="form-group">
+            <label for="femail">Your Email</label>
+            <input type="email" id="femail" name="email" placeholder="jane@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="fmsg">Message <span style="font-weight:400;opacity:.6">(optional)</span></label>
+            <textarea id="fmsg" name="message" placeholder="Any questions or special needs..."></textarea>
+          </div>
+          <button type="submit" class="form-btn">Send Message →</button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <span>🎉</span>
+          Thanks! Your email client will open with your message pre-filled.<br>
+          <small style="opacity:.7;font-weight:400">Alternatively, email us directly at spark.innovation3@gmail.com</small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ──────────── FOOTER ──────────── -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#home" class="nav-logo">
+        <svg class="logo-star" viewBox="0 0 36 36" fill="none">
+          <polygon points="18,2 21.9,12.7 33.2,13.1 24.2,20 27.4,31 18,24.6 8.6,31 11.8,20 2.8,13.1 14.1,12.7" fill="#FFE066"/>
+        </svg>
+        <span class="logo-text">Spark Innovation</span>
+      </a>
+      <p>Inspiring the next generation of engineers &amp; coders — one challenge at a time.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#programs">Programs</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="mailto:spark.innovation3@gmail.com">✉️ spark.innovation3@gmail.com</a>
+      <p class="footer-addr">15500 Bended Knee Dr</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Spark Innovation. All rights reserved.</p>
+    <p>Built for young innovators.</p>
+  </div>
+</footer>
+
+<script>
+// ── Navbar scroll glass ──────────────────────────
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, {passive:true});
+
+// ── Hamburger / mobile menu ──────────────────────
+const ham     = document.getElementById('ham');
+const mobMenu = document.getElementById('mobileMenu');
+ham.addEventListener('click', () => {
+  const open = ham.classList.toggle('active');
+  mobMenu.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+document.querySelectorAll('.mob-link').forEach(l => {
+  l.addEventListener('click', () => {
+    ham.classList.remove('active');
+    mobMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// ── Smooth scroll ────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+// ── Scroll-reveal (Intersection Observer) ────────
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ── Hero: generate gear SVGs ─────────────────────
+function gearPath(cx, cy, outerR, innerR, n) {
+  const step = (Math.PI * 2) / n;
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const a0 = i * step - Math.PI / 2;
+    const a1 = a0 + step * 0.25;
+    const a2 = a0 + step * 0.5;
+    const a3 = a0 + step * 0.75;
+    const a4 = a0 + step;
+    const px = (r, a) => cx + r * Math.cos(a);
+    const py = (r, a) => cy + r * Math.sin(a);
+    if (i === 0) d += `M${px(innerR,a0).toFixed(2)} ${py(innerR,a0).toFixed(2)}`;
+    d += ` L${px(outerR,a1).toFixed(2)} ${py(outerR,a1).toFixed(2)}`;
+    d += ` L${px(outerR,a2).toFixed(2)} ${py(outerR,a2).toFixed(2)}`;
+    d += ` L${px(outerR,a3).toFixed(2)} ${py(outerR,a3).toFixed(2)}`;
+    d += ` L${px(innerR,a4).toFixed(2)} ${py(innerR,a4).toFixed(2)}`;
+  }
+  return d + ' Z';
+}
+
+const gearDefs = [
+  { cls:'gear gear-1', color:'rgba(100,181,246,0.7)',  stroke:'rgba(100,181,246,0.9)',  n:10, hubR:14 },
+  { cls:'gear gear-2', color:'rgba(255,224,102,0.55)', stroke:'rgba(255,224,102,0.8)',  n:8,  hubR:12 },
+  { cls:'gear gear-3', color:'rgba(100,181,246,0.6)',  stroke:'rgba(100,181,246,0.8)',  n:12, hubR:16 },
+  { cls:'gear gear-4', color:'rgba(255,150,0,0.5)',  stroke:'rgba(255,150,0,0.75)', n:7,  hubR:9  },
+];
+const heroBg = document.getElementById('heroBg');
+gearDefs.forEach(g => {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 100 100');
+  svg.setAttribute('fill','none');
+  svg.setAttribute('class', g.cls);
+  // gear body
+  const path = document.createElementNS(ns,'path');
+  path.setAttribute('d', gearPath(50,50,42,30,g.n));
+  path.setAttribute('fill', g.color);
+  path.setAttribute('stroke', g.stroke);
+  path.setAttribute('stroke-width','1');
+  // hub ring
+  const hub = document.createElementNS(ns,'circle');
+  hub.setAttribute('cx','50'); hub.setAttribute('cy','50'); hub.setAttribute('r', String(g.hubR));
+  hub.setAttribute('fill','var(--navy)'); hub.setAttribute('stroke', g.stroke); hub.setAttribute('stroke-width','1.5');
+  // center dot
+  const dot = document.createElementNS(ns,'circle');
+  dot.setAttribute('cx','50'); dot.setAttribute('cy','50'); dot.setAttribute('r','4');
+  dot.setAttribute('fill', g.stroke);
+  svg.appendChild(path); svg.appendChild(hub); svg.appendChild(dot);
+  heroBg.appendChild(svg);
+});
+
+// ── Hero: floating particles & stars ────────────
+(function createParticles(){
+  const colors = ['var(--gold)','rgba(100,181,246,.9)','rgba(255,255,255,.85)','var(--orange)'];
+  for (let i = 0; i < 38; i++) {
+    const el = document.createElement('div');
+    const size = Math.random() * 5 + 2;
+    const dur  = Math.random() * 4 + 2.8;
+    const del  = Math.random() * 4;
+    el.className = 'dot';
+    el.style.cssText = [
+      `width:${size}px`, `height:${size}px`,
+      `top:${Math.random()*94}%`, `left:${Math.random()*96}%`,
+      `background:${colors[Math.floor(Math.random()*colors.length)]}`,
+      `animation-duration:${dur.toFixed(2)}s`,
+      `animation-delay:${del.toFixed(2)}s`,
+      `opacity:${(Math.random()*.6+.1).toFixed(2)}`,
+      `border-radius:${Math.random() > 0.6 ? '3px' : '50%'}`
+    ].join(';');
+    heroBg.appendChild(el);
+  }
+})();
+
+// ── Form submit (mailto) ─────────────────────────
+document.getElementById('regForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name  = document.getElementById('fname').value;
+  const child = document.getElementById('fchild').value;
+  const email = document.getElementById('femail').value;
+  const msg   = document.getElementById('fmsg').value;
+  const subj  = encodeURIComponent(`Spark Innovation Camp Registration – ${name}`);
+  const body  = encodeURIComponent(
+    `Hi! I'd like to register for Spark Innovation camp.\n\nParent Name: ${name}\nChild's Age/Grade: ${child}\nReturn Email: ${email}\n\nMessage:\n${msg || '(none)'}`
+  );
+  window.location.href = `mailto:spark.innovation3@gmail.com?subject=${subj}&body=${body}`;
+  document.getElementById('regForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+});
+</script>
+</body>
+</html>
